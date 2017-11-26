@@ -23,7 +23,7 @@ public class Main extends Application {
 		
 		
 		try {
-			Pane root = (BorderPane) FXMLLoader.load(getClass().getResource("mainView.fxml"));
+			Pane root = (Pane) FXMLLoader.load(getClass().getResource("mainView.fxml"));
 			Scene scene = new Scene(root,800,600);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);

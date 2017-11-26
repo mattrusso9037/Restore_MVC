@@ -1,0 +1,52 @@
+package model;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+public class UserBag {
+	private Map<String, User> userMap = new HashMap<String, User>();
+	private User user;
+	User admin = new User(null, null, "admin", "");
+
+	public void save() {
+		FileOutputStream fileOutput = null; 
+		ObjectOutputStream objectOutput = null;
+		
+		try {
+			fileOutput = new FileOutputStream("userBag");
+			objectOutput = new ObjectOutputStream(fileOutput);
+			objectOutput.writeObject(getUserMap());
+			
+			objectOutput.close();
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void load() {
+
+	}
+
+	public void addUser(String username, User user) {
+		userMap.put(user.getUsername(), user);
+
+	}
+
+	public Map getUserMap() {
+		return userMap;
+	}
+
+	public User getAdmin() {
+		return admin;
+	}
+
+}

@@ -1,21 +1,31 @@
 package model;
 
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import javafx.scene.image.ImageView;
 
-public class Item {
+public class Item implements Serializable {
 	private ImageView itemImage;
 	private String name;
 	private String description;
 	private double price;
 	private String dimensions;
-
-	public Item(String name, String description, double price, String dimensions, ImageView itemImage) {
+	NumberFormat formatter = new DecimalFormat("#0.00");
+	
+	public Item(String name, String description, double price) {
 		super();
 		this.name = name;
 		this.description = description;
 		this.price = price;
-		this.dimensions = dimensions;
-		this.itemImage = itemImage;
+//		this.dimensions = dimensions;
+//		this.itemImage = itemImage;
+	}
+
+	@Override
+	public String toString() {
+		return name +  "\n" + description + "\n" + "$" + formatter.format(price);
 	}
 
 	public Item() {

@@ -33,11 +33,34 @@ public class NewUserController extends LoginController implements Initializable 
 	private Label isValid;
 	@FXML
 	private Button cancelButton;
+	@FXML
+	private Button nextAdminButton;
+	@FXML
+	private PasswordField newAdminPassword;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public void newAdminButtonFire(ActionEvent event){
+		Node node = (Node) event.getSource();
+		Stage stage = (Stage) node.getScene().getWindow();
+		Parent root = null;
+		
+		userBag.getAdmin().setPassword(newAdminPassword.getText());
+		userBag.save();
+		System.out.println("new pw : " + userBag.getAdmin().getPassword());
+		
+		try {
+			root = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Scene scene = new Scene(root);
+		stage.setScene(scene);
 	}
 	
 public void cancelButtonFire(ActionEvent event) {
@@ -59,11 +82,17 @@ public void cancelButtonFire(ActionEvent event) {
 		System.out.println("button clicked");
 
 		User user = new User(firstName.getText(), lastName.getText(), email.getText(), password.getText());
+		System.out.println(user);
+		System.out.println(user.getUsername());
 
 
 		if (user.isValid() && user.passwordIsValid() && user.usernameIsValid() && !userBag.getUserMap().containsKey(email.getText())) {
 		
-			userBag.addUser(user.getUsername(), user);
+			userBag.getUserMap().put(user.getUsername(), user);
+			//userBag.addUser(user.getUsername(), user);
+			userBag.save();
+			System.out.println(userBag.getUserMap().get(user.getUsername()));
+			
 			Node node = (Node) event.getSource();
 			Stage stage = (Stage) node.getScene().getWindow();
 			Parent root = null;

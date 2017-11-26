@@ -1,0 +1,48 @@
+package controller;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ListView;
+import model.Item;
+import model.ItemBag;
+
+public class BrowseController implements Initializable {
+	public ItemBag itemBag = new ItemBag();
+	private Item item = new Item ("test", null, 0, null, null);
+	
+	
+
+
+@FXML
+	private ListView<String> listView;
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+//		itemBag.getItemList().add(item);
+//		System.out.println(item.getName());
+		
+	
+		
+//		for (int i = 0; i < itemBag.getItemList().size(); i++) {
+//		
+//			data.add(itemBag.getItemList().get(0).getName());
+//		}
+		
+		listView.setItems(setData());
+	}
+
+	public ObservableList setData() {
+		ObservableList data = FXCollections.observableArrayList();
+		data.add("1");
+		itemBag.getItemList().add(item);
+//		data.add(itemBag.getItemList().get(0).getName());
+		 return data;
+
+	}
+
+}
