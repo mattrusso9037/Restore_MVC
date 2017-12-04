@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,9 +15,12 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.Admin;
+import model.Employee;
 import model.User;
+import model.Validation;
 
-public class LoginController extends MainController implements Initializable {
+public class LoginController extends MainController {
 	@FXML
 	private Button signInBtn;
 	@FXML
@@ -55,74 +57,129 @@ public class LoginController extends MainController implements Initializable {
 	}
 
 	public void signInFire(ActionEvent event) {
+
+		User user = null;
 		
-		User user;
-		User currentUser = null;
+		// Admin admin = (Admin) user;
+
+		// User admin2 = (Admin)user;
 		System.out.println("button clicked");
 
+		// if (employeeBag.getEmployeeMap().containsKey(username.getText())) {
+		// user = (Employee) employeeBag.getEmployeeMap().get(username.getText());
+		//
+		// if (password.getText().equals(user.getPassword())) {
+		// System.out.println("CREDENTIALS MATCH");
+		// System.out.println(user.getUsername());
+		//
+		// currentUser = user;
+		// userBag.setCurrent(currentUser);
+		//
+		// System.out.println(user);
+		// System.out.println(currentUser);
+		//
+		// switchView("/view/mainView.fxml", event);
+		// }
+		// }
 		
+		//if user exists create
 		
-		
-		
-		//admin login
-		
-		
-		
-		if (userBag.getUserMap().containsKey(username.getText())) {
-			user = (User) userBag.getUserMap().get(username.getText());
+	
+			// if user exists and is not admin check password
+		if (Validation.userExists(username.getText()) && !username.getText().equals("admin")) {
+			user = (User) MainController.userBag.getUserMap().get(username.getText());
+			
+			
+			currentUser.setCurrent(user);
 
-			if (password.getText().equals(user.getPassword())) {
-				System.out.println("CREDENTIALS MATCH");
-				System.out.println(user.getUsername());
-				
-				
-				
-				Parent root = null;
-				Node node = (Node) event.getSource();
-				Stage stage = (Stage) node.getScene().getWindow();
-				
-				if (user.getUsername().equals("admin")) {
-					if (user.getPassword().equals("1234")) {
-					//load admin view
-						
-					
+			if (Validation.passwordsMatch(password.getText(), user.getPassword())) {
+				System.out.println("passwords match");
+				System.out.println("obj is user");
+				switchView("/view/mainView.fxml", event);
+			} 
+			 isValidLabel.setText("*invalid password");
 
-					try {
-						root = FXMLLoader.load(getClass().getResource("/view/adminFirstLogin.fxml"));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Scene scene = new Scene(root);
-					stage.setScene(scene);
-				
-					
-					System.out.println("create new pw");
-					
-					} else {
-						System.out.println("admin login");
-						try {
-							root = FXMLLoader.load(getClass().getResource("/view/adminView.fxml"));
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						Scene scene = new Scene(root);
-						stage.setScene(scene);
-					}
-					
-				
-				}
-			} else {
-				isValidLabel.setText("*invalid password");
-			}
-
-		} else {
-			isValidLabel.setText("*user not found");
 		}
+
+		
+		if (Validation.isAdmin(username.getText())) {
+			System.out.println("this is admin");
+			//if admin pw is valid 
+			if (Validation.passwordsMatch(password.getText(), Admin.get_Admin().getPassword())) {
+				System.out.println("passwords match");
+			
+			System.out.println("obj is admin");
+			System.out.println(Admin.get_Admin());
+			
+			if (Admin.get_Admin().getPassword().equals("1234")) {
+				switchView("/view/adminFirstLogin.fxml", event);
+				
+			}
+			currentUser.setCurrent(Admin.get_Admin());
+			
+			Admin.get_Admin().setCurrent(currentUser);
+			
+			System.out.println("current: " + Admin.get_Admin().getCurrent());
+
+			switchView("/view/mainView.fxml", event);
+
+			
+			}
+			 isValidLabel.setText("*invalid password");
+
+		}
+		 isValidLabel.setText("*user not found");
+
+		}
+
+		// switchView("/view/mainView.fxml", event);
+
+		// check for admin
+		// if (user.getUsername().equals("admin")) {
+		// System.out.println("is admin");
+		// //
+		// if (user.getPassword().equals("1234")) {
+		// System.out.println("first login");
+		// // // load admin view
+		// //
+		// userBag.setCurrent(userBag.getAdmin());
+		// // switchView("/view/adminFirstLogin.fxml", event);
+		//
+		// }
+		// }
+		//
+		//// switchView("/view/adminFirstLogin.fxml", event);
+		//
+		// System.out.println("create new pw");
+		//
+
 	
 
-	}
+	// if (user.getUsername().equals("admin")) {
+	//
+	// if (user.getPassword().equals("1234")) {
+	// // load admin view
+	//
+	// userBag.setCurrent(userBag.getAdmin());
+	//
+	//// switchView("/view/adminFirstLogin.fxml", event);
+	//
+	// System.out.println("create new pw");
+	//
+	// } else {
+	// System.out.println("admin login");
+	// switchView("/view/mainView.fxml", event);
+	// }
+	//
+	// }
+	// } else {
+	// isValidLabel.setText("*invalid password");
+	// }
+	//
+	// } else {
+	// isValidLabel.setText("*user not found");
+	// }
+	// System.out.println("end of method");
 
 	public void createAccountFire(ActionEvent event) {
 		System.out.println("button clicked");

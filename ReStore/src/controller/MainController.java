@@ -13,18 +13,36 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import model.Admin;
+import model.Employee;
+import model.EmployeeBag;
+import model.ImageBag;
 import model.ItemBag;
 import model.User;
 import model.UserBag;
+import model.Validation;
 import view.Main;
 
 public class MainController implements Initializable {
 
 	public static UserBag userBag = new UserBag();
 	public static ItemBag itemBag = new ItemBag();
+	public static ImageBag imageBag = new ImageBag();
+	public static EmployeeBag employeeBag = new EmployeeBag();
+	protected static int typeID;
+	public static User currentUser = new User();
+
+	public static int getTypeID() {
+		return typeID;
+	}
+
+	public void setTypeID(int typeID) {
+		this.typeID = typeID;
+	}
 
 	Main main = new Main();
 	@FXML
@@ -38,64 +56,103 @@ public class MainController implements Initializable {
 	@FXML
 	private ImageView doorImage;
 	@FXML
-	private Button add;
-	User user = null;
+	private Button addButton;
+	@FXML
+	private Label welcomeLabel = null;
+	@FXML
+	private Button inventoryButton;
+
+	
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 		userBag.load();
 		itemBag.load();
-		
-		if (userBag.getUserMap().containsKey("admin")) {
+		employeeBag.load();
+		Admin.get_Admin().load();
 
-		} else {
-			userBag.addUser("admin", userBag.getAdmin());
+		System.out.println("current: " + currentUser.getCurrent());
+		System.out.println("admin: " + Admin.get_Admin());
+
+//		if (Admin.get_Admin().getPassword().equals("1234")) {
+//			System.out.println("first open");
+//		} else {
+//			
+//
+//			userBag.addUser("admin", Admin.get_Admin());
+//			userBag.setAdminPassword("1234");
+//		}
+
+		if (currentUser.getCurrent() != null) {
+			welcomeLabel.setText("Welcome " + currentUser.getCurrent().getFirstName());
 		}
 
+		// button hide
+		addButton.setVisible(false);
+		inventoryButton.setVisible(false);
 
-		
+		if (currentUser.getCurrent() != null && Validation.isAdmin(currentUser.getCurrent().getUsername())) {
+
+			if (currentUser.getCurrent().getUsername().equals(Admin.get_Admin().getUsername())) {
+
+			}
+			addButton.setVisible(true);
+		}
+
+		if (currentUser.getCurrent() != null && userBag.getUserMap().containsKey(currentUser.getCurrent().getUsername())) {
+			inventoryButton.setVisible(true);
+		}
 	}
 
 	public void woodImageFire(MouseEvent event) {
-		System.out.println("wood clicked");
-
-		Node node = (Node) event.getSource();
-		Stage stage = (Stage) node.getScene().getWindow();
-		Parent root = null;
-
-		try {
-			root = FXMLLoader.load(getClass().getResource("/view/browseView.fxml"));
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Scene scene = new Scene(root);
-		stage.setScene(scene);
+		setTypeID(0);
+		switchMouseView("/view/browseView.fxml", event);
 	}
 
 	public void couchFire(MouseEvent event) {
-		System.out.println("couch clicked");
+		setTypeID(1);
+		switchMouseView("/view/browseView.fxml", event);
+
 	}
 
 	public void windowFire(MouseEvent event) {
-		System.out.println("window clicked");
+		setTypeID(2);
+		switchMouseView("/view/browseView.fxml", event);
 	}
 
 	public void doorFire(MouseEvent event) {
-		System.out.println("door clicked");
+		setTypeID(3);
+		switchMouseView("/view/browseView.fxml", event);
+	}
+
+	public void addButtonFire(ActionEvent event) {
+
+		switchView("/view/adminCenter.fxml", event);
 	}
 
 	public void signInLinkFire(ActionEvent event) {
-		System.out.println("button clicked");
+		switchView("/view/loginView.fxml", event);
+	}
+
+	public void inventoryButtonFire(ActionEvent event) {
+		switchView("/view/addItemView.fxml", event);
+	}
+
+	public Label getWelcomeLabel() {
+		return welcomeLabel;
+	}
+
+	public void setWelcomeLabel(Label welcomeLabel) {
+		this.welcomeLabel = welcomeLabel;
+	}
+
+	public void switchView(String viewName, ActionEvent event) {
 		Node node = (Node) event.getSource();
 		Stage stage = (Stage) node.getScene().getWindow();
 		Parent root = null;
 
 		try {
-			root = FXMLLoader.load(getClass().getResource("/view/loginView.fxml"));
-
+			root = FXMLLoader.load(getClass().getResource(viewName));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -105,4 +162,19 @@ public class MainController implements Initializable {
 
 	}
 
+	public void switchMouseView(String viewName, MouseEvent event) {
+		Node node = (Node) event.getSource();
+		Stage stage = (Stage) node.getScene().getWindow();
+		Parent root = null;
+
+		try {
+			root = FXMLLoader.load(getClass().getResource(viewName));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Scene scene = new Scene(root);
+		stage.setScene(scene);
+
+	}
 }

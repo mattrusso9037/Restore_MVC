@@ -1,0 +1,35 @@
+package model;
+
+public class Admin extends User {
+
+	private static Admin _Admin;
+	
+	
+	
+	public static Admin createAdmin() {
+		if (_Admin == null) {
+			_Admin = new Admin();
+			System.out.println("Admin created");
+		} else {
+			System.out.println("There can only be one admin");
+		}
+		return _Admin;
+	}
+	
+	public Admin() {
+		super();
+	}
+
+	public Admin(String firstName, String lastName, String username, String password) {
+		super(firstName, lastName, username, password);
+	}
+
+	public static Admin get_Admin() {
+		return _Admin;
+	}
+
+	public static void set_Admin(Admin _Admin) {
+		Admin._Admin = _Admin;
+	}
+
+}

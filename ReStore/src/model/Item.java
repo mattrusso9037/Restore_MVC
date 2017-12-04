@@ -4,27 +4,32 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Item implements Serializable {
-	private ImageView itemImage;
+	private String imageFileName;
 	private String name;
 	private String description;
 	private double price;
 	private String dimensions;
 	NumberFormat formatter = new DecimalFormat("#0.00");
 	
-	public Item(String name, String description, double price) {
+	public Item(String name, String description, double price, String imageFileName) {
 		super();
 		this.name = name;
 		this.description = description;
 		this.price = price;
+		this.setImageFileName(imageFileName);
 //		this.dimensions = dimensions;
 //		this.itemImage = itemImage;
 	}
+	
 
 	@Override
 	public String toString() {
+		
+	
 		return name +  "\n" + description + "\n" + "$" + formatter.format(price);
 	}
 
@@ -63,5 +68,18 @@ public class Item implements Serializable {
 	public void setDimensions(String dimensions) {
 		this.dimensions = dimensions;
 	}
+
+
+	public String getImageFileName() {
+		return imageFileName;
+	}
+
+
+	public void setImageFileName(String imageFileName) {
+		this.imageFileName = imageFileName;
+	}
+
+
+
 
 }

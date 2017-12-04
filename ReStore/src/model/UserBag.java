@@ -8,13 +8,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserBag implements Serializable {
+
 	private Map<String, User> userMap = new HashMap<String, User>();
-	private User user;
-	User admin = new User(null, null, "admin", "1234");
+	
+	private User admin;
+	
 
 	public void save() {
 		FileOutputStream fileOutput = null;
@@ -24,9 +27,7 @@ public class UserBag implements Serializable {
 			fileOutput = new FileOutputStream("userBag.dat");
 			objectOutput = new ObjectOutputStream(fileOutput);
 			objectOutput.writeObject(getUserMap());
-			System.out.println("bag saved.");
-			
-			
+			System.out.println("userbag saved.");
 
 			objectOutput.close();
 
@@ -37,7 +38,7 @@ public class UserBag implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public void load() {
@@ -51,21 +52,16 @@ public class UserBag implements Serializable {
 
 			if (file.exists()) {
 
-				//for (int i = 0; i < file.length(); i++) {
-//					User user = (User) objectInput.readObject();
-//					userMap.put(user.getUsername(), user);
-//					System.out.println(user.getFirstName());
-			//	}
 				userMap = (Map<String, User>) objectInput.readObject();
 			} else {
-			System.out.println("nothing to load");
+				System.out.println("nothing to load");
 			}
 
 			objectInput.close();
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("nothing to load");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -80,11 +76,20 @@ public class UserBag implements Serializable {
 
 	}
 
+	
+
 	public Map getUserMap() {
 		return userMap;
 	}
 
+	public void setAdminPassword(String password) {
+
+		userMap.get("admin").setPassword(password);
+		save();
+	}
+
 	public User getAdmin() {
+		admin = userMap.get("admin");
 		return admin;
 	}
 

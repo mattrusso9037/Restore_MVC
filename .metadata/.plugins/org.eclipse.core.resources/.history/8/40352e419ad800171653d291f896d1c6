@@ -1,0 +1,179 @@
+package controller;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+import model.Admin;
+import model.Employee;
+import model.EmployeeBag;
+import model.ImageBag;
+import model.ItemBag;
+import model.User;
+import model.UserBag;
+import model.Validation;
+import view.Main;
+
+public class MainController implements Initializable {
+
+	public static UserBag userBag = new UserBag();
+	public static ItemBag itemBag = new ItemBag();
+	public static ImageBag imageBag = new ImageBag();
+	public static EmployeeBag employeeBag = new EmployeeBag();
+	protected static int typeID;
+
+	public static int getTypeID() {
+		return typeID;
+	}
+
+	public void setTypeID(int typeID) {
+		this.typeID = typeID;
+	}
+
+	Main main = new Main();
+	@FXML
+	private Hyperlink signInLink;
+	@FXML
+	private ImageView woodImage;
+	@FXML
+	private ImageView couchImage;
+	@FXML
+	private ImageView windowImage;
+	@FXML
+	private ImageView doorImage;
+	@FXML
+	private Button addButton;
+	@FXML
+	private Label welcomeLabel = null;
+	@FXML
+	private Button inventoryButton;
+
+	
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		userBag.load();
+		itemBag.load();
+		employeeBag.load();
+		Admin.get_Admin().load();
+
+		System.out.println("current: " + User.getCurrent());
+		System.out.println("admin: " + Admin.get_Admin());
+
+//		if (Admin.get_Admin().getPassword().equals("1234")) {
+//			System.out.println("first open");
+//		} else {
+//			
+//
+//			userBag.addUser("admin", Admin.get_Admin());
+//			userBag.setAdminPassword("1234");
+//		}
+
+		if (User.getCurrent() != null) {
+			welcomeLabel.setText("Welcome " + User.getCurrent().getFirstName());
+		}
+
+		// button hide
+		addButton.setVisible(false);
+		inventoryButton.setVisible(false);
+
+		if (User.getCurrent() != null && Validation.isAdmin(User.getCurrent().getUsername())) {
+
+			if (User.getCurrent().getUsername().equals(userBag.getAdmin().getUsername())) {
+
+			}
+			addButton.setVisible(true);
+		}
+
+		if (User.getCurrent() != null && userBag.getUserMap().containsKey(User.getCurrent().getUsername())) {
+			inventoryButton.setVisible(true);
+		}
+	}
+
+	public void woodImageFire(MouseEvent event) {
+		setTypeID(0);
+		switchMouseView("/view/browseView.fxml", event);
+	}
+
+	public void couchFire(MouseEvent event) {
+		setTypeID(1);
+		switchMouseView("/view/browseView.fxml", event);
+
+	}
+
+	public void windowFire(MouseEvent event) {
+		setTypeID(2);
+		switchMouseView("/view/browseView.fxml", event);
+	}
+
+	public void doorFire(MouseEvent event) {
+		setTypeID(3);
+		switchMouseView("/view/browseView.fxml", event);
+	}
+
+	public void addButtonFire(ActionEvent event) {
+
+		switchView("/view/adminCenter.fxml", event);
+	}
+
+	public void signInLinkFire(ActionEvent event) {
+		switchView("/view/loginView.fxml", event);
+	}
+
+	public void inventoryButtonFire(ActionEvent event) {
+		switchView("/view/addItemView.fxml", event);
+	}
+
+	public Label getWelcomeLabel() {
+		return welcomeLabel;
+	}
+
+	public void setWelcomeLabel(Label welcomeLabel) {
+		this.welcomeLabel = welcomeLabel;
+	}
+
+	public void switchView(String viewName, ActionEvent event) {
+		Node node = (Node) event.getSource();
+		Stage stage = (Stage) node.getScene().getWindow();
+		Parent root = null;
+
+		try {
+			root = FXMLLoader.load(getClass().getResource(viewName));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Scene scene = new Scene(root);
+		stage.setScene(scene);
+
+	}
+
+	public void switchMouseView(String viewName, MouseEvent event) {
+		Node node = (Node) event.getSource();
+		Stage stage = (Stage) node.getScene().getWindow();
+		Parent root = null;
+
+		try {
+			root = FXMLLoader.load(getClass().getResource(viewName));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Scene scene = new Scene(root);
+		stage.setScene(scene);
+
+	}
+}

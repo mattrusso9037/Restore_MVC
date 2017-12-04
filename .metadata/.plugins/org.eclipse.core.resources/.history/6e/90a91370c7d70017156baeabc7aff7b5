@@ -1,0 +1,25 @@
+package model;
+
+public class Validation {
+	
+	public static boolean usernameIsValid(String username) {
+		if (username.contains("@")) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean passwordIsValid(String password) {
+		if (password.length() < 8) {
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isValid(String firstName, String lastName, String username, String password) {
+		if (firstName.isEmpty() | lastName.isEmpty() | username.isEmpty() | password.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+}

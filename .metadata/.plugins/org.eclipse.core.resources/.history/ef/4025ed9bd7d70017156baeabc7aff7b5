@@ -1,0 +1,17 @@
+package model;
+
+
+public class Employee extends User {
+
+	public Employee() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Employee(String firstName, String lastName, String id, String password) {
+		super(firstName, lastName, id, password);
+		// TODO Auto-generated constructor stub
+	}
+	
+
+}
