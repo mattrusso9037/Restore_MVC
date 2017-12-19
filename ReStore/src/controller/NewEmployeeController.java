@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -8,6 +9,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
+import model.Database;
 import model.Employee;
 
 public class NewEmployeeController extends MainController implements Initializable {
@@ -20,6 +24,7 @@ public class NewEmployeeController extends MainController implements Initializab
 	@FXML
 	private TextField lastName;
 
+
 	@Override
 
 	public void initialize(URL location, ResourceBundle resources) {
@@ -29,10 +34,12 @@ public class NewEmployeeController extends MainController implements Initializab
 
 	public void createButtonFire(ActionEvent event) {
 		Employee employee = new Employee(firstName.getText(), lastName.getText(), emailTextField.getText(), "1234");
-		employeeBag.addEmployee(employee.getUsername(), employee);
-		employeeBag.save();
+		Database.employeeBag.addEmployee(employee.getUsername(), employee);
+		Database.employeeBag.save();
 		switchView("/view/adminCenter.fxml", event);
 	}
+
+
 
 	public void backButtonFire(ActionEvent event) {
 		switchView("/view/adminCenter.fxml", event);

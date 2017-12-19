@@ -14,27 +14,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import model.Admin;
-import model.Employee;
-import model.EmployeeBag;
-import model.ImageBag;
-import model.ItemBag;
-import model.User;
-import model.UserBag;
+import model.Database;
 import model.Validation;
-import view.Main;
 
 public class MainController implements Initializable {
 
-	public static UserBag userBag = new UserBag();
-	public static ItemBag itemBag = new ItemBag();
-	public static ImageBag imageBag = new ImageBag();
-	public static EmployeeBag employeeBag = new EmployeeBag();
 	protected static int typeID;
-	public static User currentUser = new User();
+	protected static String searchQuery;
 
 	public static int getTypeID() {
 		return typeID;
@@ -44,9 +36,12 @@ public class MainController implements Initializable {
 		this.typeID = typeID;
 	}
 
-	Main main = new Main();
 	@FXML
 	private Hyperlink signInLink;
+	@FXML
+	private Hyperlink signOutLink;
+	@FXML
+	private Hyperlink myCartLink;
 	@FXML
 	private ImageView woodImage;
 	@FXML
@@ -56,52 +51,73 @@ public class MainController implements Initializable {
 	@FXML
 	private ImageView doorImage;
 	@FXML
-	private Button addButton;
+	private Button adminButton;
 	@FXML
 	private Label welcomeLabel = null;
 	@FXML
 	private Button inventoryButton;
-
-	
+	@FXML
+	private Button goButton;
+	@FXML
+	private Button pendingOrdersButton;
+	@FXML
+	private TextField searchBox; 
+	@FXML
+	private Pane pane;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		userBag.load();
-		itemBag.load();
-		employeeBag.load();
+		goButton.setDefaultButton(true);
+
+		Database.userBag.load();
+		Database.itemBag.load();
+		Database.employeeBag.load();
+		Database.orderBag.load();
 		Admin.get_Admin().load();
-
-		System.out.println("current: " + currentUser.getCurrent());
-		System.out.println("admin: " + Admin.get_Admin());
-
-//		if (Admin.get_Admin().getPassword().equals("1234")) {
-//			System.out.println("first open");
-//		} else {
-//			
-//
-//			userBag.addUser("admin", Admin.get_Admin());
-//			userBag.setAdminPassword("1234");
-//		}
-
-		if (currentUser.getCurrent() != null) {
-			welcomeLabel.setText("Welcome " + currentUser.getCurrent().getFirstName());
-		}
-
 		// button hide
-		addButton.setVisible(false);
+		adminButton.setVisible(false);
 		inventoryButton.setVisible(false);
+		signOutLink.setVisible(false);
+		myCartLink.setVisible(false);
+		pendingOrdersButton.setVisible(false); 
 
-		if (currentUser.getCurrent() != null && Validation.isAdmin(currentUser.getCurrent().getUsername())) {
+		if (Database.currentUser.getCurrent() != null) {
+			signInLink.setVisible(false);
+			signOutLink.setVisible(true); 
 
-			if (currentUser.getCurrent().getUsername().equals(Admin.get_Admin().getUsername())) {
+			if (Validation.isAdmin(Database.currentUser.getCurrent().getUsername())
+					|| Validation.isEmployee(Database.currentUser.getCurrent().getUsername())) {
+				myCartLink.setVisible(false);
+			} else {
+				myCartLink.setVisible(true);
 
 			}
-			addButton.setVisible(true);
+
 		}
 
-		if (currentUser.getCurrent() != null && userBag.getUserMap().containsKey(currentUser.getCurrent().getUsername())) {
-			inventoryButton.setVisible(true);
+		
+		if (Database.currentUser.getCurrent() != null) {
+			welcomeLabel.setText("Welcome " + Database.currentUser.getCurrent().getFirstName());
+
 		}
+
+		if (Database.currentUser.getCurrent() != null
+				&& Validation.isAdmin(Database.currentUser.getCurrent().getUsername())) {
+			adminButton.setVisible(true);
+			pendingOrdersButton.setVisible(true);
+		}
+
+		if (Database.currentUser.getCurrent() != null
+				&& Validation.isEmployee(Database.currentUser.getCurrent().getUsername())) {
+			inventoryButton.setVisible(true);
+			pendingOrdersButton.setVisible(true);
+
+		}
+
+	}
+
+	public void pendingOrdersButtonFire(ActionEvent event) {
+		switchView("/view/pendingOrdersView.fxml", event);
 	}
 
 	public void woodImageFire(MouseEvent event) {
@@ -125,8 +141,7 @@ public class MainController implements Initializable {
 		switchMouseView("/view/browseView.fxml", event);
 	}
 
-	public void addButtonFire(ActionEvent event) {
-
+	public void adminButtonFire(ActionEvent event) {
 		switchView("/view/adminCenter.fxml", event);
 	}
 
@@ -134,8 +149,25 @@ public class MainController implements Initializable {
 		switchView("/view/loginView.fxml", event);
 	}
 
+	public void signOutLinkFire(ActionEvent event) {
+		Database.currentUser.setCurrent(null);
+		switchView("/view/mainView.fxml", event);
+
+	}
+
+	public void myCartLinkFire(ActionEvent event) {
+
+		switchView("/view/myCartView.fxml", event);
+	}
+
 	public void inventoryButtonFire(ActionEvent event) {
-		switchView("/view/addItemView.fxml", event);
+		switchView("/view/employeeCenter.fxml", event);
+	}
+
+	public void goButtonFire(ActionEvent event) {
+		setTypeID(4);
+		searchQuery = searchBox.getText();
+		switchView("/view/browseView.fxml", event);
 	}
 
 	public Label getWelcomeLabel() {
@@ -158,6 +190,8 @@ public class MainController implements Initializable {
 			e.printStackTrace();
 		}
 		Scene scene = new Scene(root);
+		scene.getStylesheets().add("/view/application.css");
+
 		stage.setScene(scene);
 
 	}
@@ -174,7 +208,9 @@ public class MainController implements Initializable {
 			e.printStackTrace();
 		}
 		Scene scene = new Scene(root);
+		scene.getStylesheets().add("/view/application.css");
 		stage.setScene(scene);
 
 	}
+
 }

@@ -46,8 +46,8 @@
 		<item value="588" key="DIALOG_WIDTH"/>
 		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-24|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
 		<item value="708" key="DIALOG_HEIGHT"/>
-		<item value="823" key="DIALOG_X_ORIGIN"/>
-		<item value="108" key="DIALOG_Y_ORIGIN"/>
+		<item value="501" key="DIALOG_X_ORIGIN"/>
+		<item value="94" key="DIALOG_Y_ORIGIN"/>
 	</section>
 	<section name="org.eclipse.jdt.internal.ui.dialogs.OpenTypeSelectionDialog2">
 		<item value="true" key="ShowStatusLine"/>
@@ -64,12 +64,27 @@
 		<item value="588" key="DIALOG_WIDTH"/>
 		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-24|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
 		<item value="694" key="DIALOG_HEIGHT"/>
-		<item value="498" key="DIALOG_X_ORIGIN"/>
-		<item value="64" key="DIALOG_Y_ORIGIN"/>
+		<item value="398" key="DIALOG_X_ORIGIN"/>
+		<item value="246" key="DIALOG_Y_ORIGIN"/>
 	</section>
 	<section name="RefactoringWizard.preview">
 		<item value="600" key="width"/>
 		<item value="400" key="height"/>
+	</section>
+	<section name="FatJarPackageWizard">
+		<item value="C:\Users\mattr\Restore_MVC" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
+		<item value="Main (1) - ReStore" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
+		<item value="C:\Users\mattr\Desktop\MattRussoRestoreProject\MattRussoRestore.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
+		<item value="1" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
+		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="C:\Users\mattr\Desktop\MattRussoRestoreProject\MattRussoRestore.jar"/>
+			<item value="C:\Users\mattr\Desktop\restore test\restore.jar"/>
+		</list>
+		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
+			<item value="C:\Users\mattr\Restore_MVC.xml"/>
+			<item value=".xml"/>
+		</list>
 	</section>
 	<section name="SourceActionDialog.methods">
 		<item value="true" key="IgnoreDefault"/>

@@ -1,0 +1,9 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.list-cell:odd { -fx-background-image: url('file:C:/Users/mattr/desktop/restore/restorelogo2.png');}
+.list-cell:even { -fx-background-color: white; }
+.list-cell{-fx-border-width:1; -fx-border-color:grey; }
+.hyperlink{-fx-text-fill: #093476; -fx-border:none;}
+.label{-fx-text-fill:#093476} 
+.button{-fx-border-color:#093476}
+.text-field{-fx-border-color:#093476}
+.root{-fx-background-image: url('file:C:/Users/mattr/desktop/restore/restorelogo2.png');-fx-background-position:top-center;-fx-background-size:300 300;-fx-background-repeat:no-repeat }

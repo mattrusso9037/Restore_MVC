@@ -17,6 +17,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.Admin;
+import model.Database;
 import model.User;
 import model.Validation;
 
@@ -36,23 +37,31 @@ public class NewUserController extends LoginController implements Initializable 
 	@FXML
 	private Button cancelButton;
 	@FXML
-	private Button nextAdminButton;
+	private Button nextButton;
 	@FXML
-	private PasswordField newAdminPassword;
+	private PasswordField newPassword;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 
 	}
 
-	public void newAdminButtonFire(ActionEvent event) {
+	public void newPasswordButtonFire(ActionEvent event) {
 
-		Admin.get_Admin().setPassword(newAdminPassword.getText());		
-		System.out.println("new pw : " + Admin.get_Admin().getPassword());
-		System.out.println("admin after pw change: " + Admin.get_Admin());
-		Admin.get_Admin().save();
-		currentUser.setCurrent(Admin.get_Admin());
+		if (Validation.isAdmin(Database.currentUser.getCurrent().getUsername())) {
+			Admin.get_Admin().setPassword(newPassword.getText());
+			System.out.println("new pw : " + Admin.get_Admin().getPassword());
+			System.out.println("admin after pw change: " + Admin.get_Admin());
+			Admin.get_Admin().save();
+		}
+
+		if (Validation.isEmployee(Database.currentUser.getCurrent().getUsername())) {
+			System.out.println("this is employee");
+			Database.currentUser.getCurrent().setPassword(newPassword.getText());
+			System.out.println(Database.currentUser.getCurrent() + Database.currentUser.getCurrent().getPassword());
+			Database.employeeBag.save();
+		}
+
 		switchView("/view/mainView.fxml", event);
 
 	}
@@ -62,25 +71,21 @@ public class NewUserController extends LoginController implements Initializable 
 	}
 
 	public void createButtonFire(ActionEvent event) {
-		System.out.println("button clicked");
 
 		User user = new User(firstName.getText(), lastName.getText(), email.getText(), password.getText());
-		System.out.println(user);
-		System.out.println(user.getUsername());
-
+	
 		if (Validation.isValid(user) && Validation.passwordIsValid(user.getPassword())
 				&& Validation.usernameIsValid(user.getUsername())
-				&& !userBag.getUserMap().containsKey(email.getText())) {
+				&& !Database.userBag.getUserMap().containsKey(email.getText())) {
 
-			userBag.getUserMap().put(user.getUsername(), user);
-			// userBag.addUser(user.getUsername(), user);
-			userBag.save();
-			System.out.println(userBag.getUserMap().get(user.getUsername()));
+			Database.userBag.getUserMap().put(user.getUsername(), user);
+			Database.userBag.save();
+			System.out.println(Database.userBag.getUserMap().get(user.getUsername()));
 
 			switchView("/view/loginView.fxml", event);
 		} else if (!Validation.usernameIsValid(user.getUsername())) {
 			isValid.setText("*  not a valid email address");
-		} else if (userBag.getUserMap().containsKey(email.getText())) {
+		} else if (Database.userBag.getUserMap().containsKey(email.getText())) {
 			isValid.setText("*  Username already exists");
 			email.clear();
 		} else if (!Validation.passwordIsValid(user.getPassword())) {
@@ -89,7 +94,5 @@ public class NewUserController extends LoginController implements Initializable 
 			isValid.setText("*  all fields required");
 		}
 	}
-
-	
 
 }

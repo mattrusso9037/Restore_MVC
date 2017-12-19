@@ -1,0 +1,43 @@
+package model;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Order {
+
+	private ArrayList items;
+	private User user;
+	
+	public Order(User user, ArrayList items) {
+	
+		this.items = items;
+		this.user = user;
+	}
+
+	public Order() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String toString() {
+		return "Order " + "\n Customer" + "\n" + user + "\n" + items.toString() ;
+	}
+
+	public ArrayList getItems() {
+		return items;
+	}
+
+	public void setItems(ArrayList items) {
+		this.items = items;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+}

@@ -1,70 +1,104 @@
 package controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
+import javafx.scene.input.MouseEvent;
+import model.GUIHelper;
 import model.Item;
 
-public class BrowseController extends AdminController implements Initializable {
+public class BrowseController extends MainController implements Initializable {
 
 	@FXML
-	private ListView<Item> listView;
+	protected ListView<Item> listView;
 	@FXML
 	private ImageView itemImage;
+	@FXML
+	private Hyperlink azLink, priceLink, recentLink;
+	@FXML
+	private TextField searchBox; 
+	@FXML
+	private Button searchButton;
+	@FXML
+	private Hyperlink myCartLink;
+	
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
-		System.out.println(data.isEmpty());
-		System.out.println(itemBag.getItemStack().isEmpty());
-		System.out.println("test");
-		System.out.println(MainController.getTypeID());
-		
+		listView.getItems().clear();
+	
+
 		switch (MainController.getTypeID()) {
 		case 0:
-			listView.setItems(setData("wood"));
+			listView.setItems(GUIHelper.setData("wood"));
 			break;
 		case 1:
-			listView.setItems(setData("furniture"));
+			listView.setItems(GUIHelper.setData("furniture"));
 			break;
-		case 2:
-			listView.setItems(setData("window"));
+		case 2:			
+			listView.setItems(GUIHelper.setData("window"));
 			break;
 		case 3:
-			listView.setItems(setData("door"));
+			listView.setItems(GUIHelper.setData("door"));
 			break;
-		}
+		case 4:
+			listView.setItems(GUIHelper.setQueryData(searchQuery));
 
+		}
+		GUIHelper.setCustomCells(listView, "");
+		
+
+
+	}
 	
+	public void myCartLinkFire(ActionEvent event) {
+		
+	}
+		public void searchButtonFire(ActionEvent event) {
+			setTypeID(4);
+			searchQuery = searchBox.getText();
+			listView.getItems().clear();
+			switchView("/view/browseView.fxml", event);
+
+		
 	}
 
-	public void displayImage() {
+	public void azLinkFire(ActionEvent event) {
+		GUIHelper.saveDataSize(GUIHelper.getData().size());
+		listView.setItems(GUIHelper.setSortedNameData(listView));
+	}
 
-		imageBag.load(listView.getSelectionModel().getSelectedItem().getImageFileName(), itemImage);
+	public void priceLinkFire(ActionEvent event) {
+		GUIHelper.saveDataSize(GUIHelper.getData().size());
+		listView.setItems(GUIHelper.setSortedPriceData(listView));
+	}
+
+	public void recentLinkFire(ActionEvent event) {
+		GUIHelper.saveDataSize(GUIHelper.getData().size());
+		listView.setItems(GUIHelper.setSortedRecentlyCreatedData(listView));
+
+	}
+
+	public void showDetails(MouseEvent event) {
+
+		GUIHelper.setSelection(GUIHelper.getSelected(listView));
+		listView.getItems().clear();
+		switchMouseView("/view/itemDetailsView.fxml", event);
 	}
 
 	public void backButtonFire(ActionEvent event) {
+		listView.getItems().clear();
 
 		switchView("/view/mainView.fxml", event);
 	}
+	
 
 }

@@ -13,10 +13,18 @@ public class AdminCenterController extends AdminController implements Initializa
 	private Button addEmployeeButton;
 	@FXML
 	private Button inventoryButton;
+	@FXML
+	private Button lookupButton;
+	@FXML
+	private Button employeesButton;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		
+	}
+	public void lookupButtonFire(ActionEvent event) {
+		switchView("/view/itemLookupView.fxml", event);
 	}
 	public void inventoryButtonFire(ActionEvent event) {
 		switchView("/view/addItemView.fxml", event);
@@ -29,6 +37,9 @@ public class AdminCenterController extends AdminController implements Initializa
 	public void homeButtonFire(ActionEvent event) {
 		switchView("/view/mainView.fxml", event);
 
+	}
+	public void employeesButtonFire(ActionEvent event) {
+		switchView("/view/employeesView.fxml", event);
 	}
 
 }

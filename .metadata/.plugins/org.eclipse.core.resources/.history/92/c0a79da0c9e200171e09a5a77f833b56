@@ -1,0 +1,32 @@
+package model;
+
+import java.util.ArrayList;
+
+public class Order {
+
+	private ArrayList<Item> items;
+	private User user;
+	
+	public Order(ArrayList<Item> items, User user) {
+	
+		this.items = items;
+		this.user = user;
+	}
+
+	public ArrayList<Item> getItems() {
+		return items;
+	}
+
+	public void setItems(ArrayList<Item> items) {
+		this.items = items;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+}

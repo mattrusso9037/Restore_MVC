@@ -16,7 +16,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.Admin;
+import model.Database;
 import model.Employee;
+import model.GUIHelper;
 import model.User;
 import model.Validation;
 
@@ -29,173 +31,99 @@ public class LoginController extends MainController {
 	private TextField username;
 	@FXML
 	private TextField password;
-	@FXML
+	@FXML 
 	private Label isValidLabel;
 	@FXML
 	private Button cancelButton;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 
+		signInBtn.setDefaultButton(true);
+		
 	}
 
 	public void cancelButtonFire(ActionEvent event) {
-		Node node = (Node) event.getSource();
-		Stage stage = (Stage) node.getScene().getWindow();
-		Parent root = null;
-
-		try {
-			root = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Scene scene = new Scene(root);
-		stage.setScene(scene);
-
+		switchView("/view/mainView.fxml", event);
 	}
 
 	public void signInFire(ActionEvent event) {
 
 		User user = null;
-		
-		// Admin admin = (Admin) user;
+		Employee employee = null;
 
-		// User admin2 = (Admin)user;
-		System.out.println("button clicked");
+		if (Validation.isEmployee(username.getText())) {
+			employee = (Employee) Database.employeeBag.getEmployeeMap().get(username.getText());
+			Database.currentUser.setCurrent(employee);
 
-		// if (employeeBag.getEmployeeMap().containsKey(username.getText())) {
-		// user = (Employee) employeeBag.getEmployeeMap().get(username.getText());
-		//
-		// if (password.getText().equals(user.getPassword())) {
-		// System.out.println("CREDENTIALS MATCH");
-		// System.out.println(user.getUsername());
-		//
-		// currentUser = user;
-		// userBag.setCurrent(currentUser);
-		//
-		// System.out.println(user);
-		// System.out.println(currentUser);
-		//
-		// switchView("/view/mainView.fxml", event);
-		// }
-		// }
-		
-		//if user exists create
-		
-	
-			// if user exists and is not admin check password
-		if (Validation.userExists(username.getText()) && !username.getText().equals("admin")) {
-			user = (User) MainController.userBag.getUserMap().get(username.getText());
-			
-			
-			currentUser.setCurrent(user);
+			if (Validation.passwordsMatch(password.getText(), employee.getPassword())) {
+				System.out.println("passwords match");
+				System.out.println("obj is employee");
+				if (employee.getPassword().equals("1234")) {
+					Database.currentUser.setCurrent(employee);
+					switchView("/view/adminFirstLogin.fxml", event);
+
+				} else {
+					Database.currentUser.setCurrent(employee);
+					switchView("/view/mainView.fxml", event);
+				}
+
+			} else {
+				isValidLabel.setVisible(true);
+				isValidLabel.setText("*invalid password");
+				GUIHelper.setPause(isValidLabel);
+			}
+
+		} else {
+			isValidLabel.setVisible(true);
+			isValidLabel.setText("user not found");
+			GUIHelper.setPause(isValidLabel);
+
+		}
+
+		// if user exists
+		if (Validation.isUser(username.getText())) {
+			user = (User) Database.userBag.getUserMap().get(username.getText());
 
 			if (Validation.passwordsMatch(password.getText(), user.getPassword())) {
-				System.out.println("passwords match");
-				System.out.println("obj is user");
+				Database.currentUser.setCurrent(user);
+				Database.userBag.load();
 				switchView("/view/mainView.fxml", event);
-			} 
-			 isValidLabel.setText("*invalid password");
+			}
 
+			if (!Validation.userExists(user.getUsername())) {
+				isValidLabel.setText("*user not found");
+			}
+
+			isValidLabel.setText("*invalid password");
 		}
 
-		
+
+		// Admin
 		if (Validation.isAdmin(username.getText())) {
-			System.out.println("this is admin");
-			//if admin pw is valid 
+			System.out.println("is admin");
 			if (Validation.passwordsMatch(password.getText(), Admin.get_Admin().getPassword())) {
-				System.out.println("passwords match");
-			
-			System.out.println("obj is admin");
-			System.out.println(Admin.get_Admin());
-			
-			if (Admin.get_Admin().getPassword().equals("1234")) {
-				switchView("/view/adminFirstLogin.fxml", event);
-				
-			}
-			currentUser.setCurrent(Admin.get_Admin());
-			
-			Admin.get_Admin().setCurrent(currentUser);
-			
-			System.out.println("current: " + Admin.get_Admin().getCurrent());
+System.out.println("pws match");
+				if (Admin.get_Admin().getPassword().equals("1234")) {
+					System.out.println("first login");
+					Database.currentUser.setCurrent(Admin.get_Admin());
+					switchView("/view/adminFirstLogin.fxml", event);
 
-			switchView("/view/mainView.fxml", event);
+				} else {
 
-			
+					Database.currentUser.setCurrent(Admin.get_Admin());
+					switchView("/view/mainView.fxml", event);
+				}
+
 			}
-			 isValidLabel.setText("*invalid password");
 
 		}
-		 isValidLabel.setText("*user not found");
+		isValidLabel.setText("*invalid password");
 
-		}
-
-		// switchView("/view/mainView.fxml", event);
-
-		// check for admin
-		// if (user.getUsername().equals("admin")) {
-		// System.out.println("is admin");
-		// //
-		// if (user.getPassword().equals("1234")) {
-		// System.out.println("first login");
-		// // // load admin view
-		// //
-		// userBag.setCurrent(userBag.getAdmin());
-		// // switchView("/view/adminFirstLogin.fxml", event);
-		//
-		// }
-		// }
-		//
-		//// switchView("/view/adminFirstLogin.fxml", event);
-		//
-		// System.out.println("create new pw");
-		//
-
-	
-
-	// if (user.getUsername().equals("admin")) {
-	//
-	// if (user.getPassword().equals("1234")) {
-	// // load admin view
-	//
-	// userBag.setCurrent(userBag.getAdmin());
-	//
-	//// switchView("/view/adminFirstLogin.fxml", event);
-	//
-	// System.out.println("create new pw");
-	//
-	// } else {
-	// System.out.println("admin login");
-	// switchView("/view/mainView.fxml", event);
-	// }
-	//
-	// }
-	// } else {
-	// isValidLabel.setText("*invalid password");
-	// }
-	//
-	// } else {
-	// isValidLabel.setText("*user not found");
-	// }
-	// System.out.println("end of method");
+	}
 
 	public void createAccountFire(ActionEvent event) {
-		System.out.println("button clicked");
-
-		Node node = (Node) event.getSource();
-		Stage stage = (Stage) node.getScene().getWindow();
-		Parent root = null;
-
-		try {
-			root = FXMLLoader.load(getClass().getResource("/view/createAccountView.fxml"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Scene scene = new Scene(root);
-		stage.setScene(scene);
+		switchView("/view/createAccountView.fxml", event);
 	}
 
 }

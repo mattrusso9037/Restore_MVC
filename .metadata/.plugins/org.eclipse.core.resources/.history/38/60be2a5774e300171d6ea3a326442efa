@@ -1,0 +1,23 @@
+package model;
+
+public class Employee extends User {
+
+	private static int idCounter;
+	private int id;
+
+	public Employee() {
+		super();
+	}
+
+	public Employee(String firstName, String lastName, String username, String password) {
+		super(firstName, lastName, username, password);
+		this.id = idCounter++;
+
+	}
+
+	public int getId() {
+		return id;
+	}
+	
+
+}

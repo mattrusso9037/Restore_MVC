@@ -4,19 +4,23 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import model.Database;
+import model.GUIHelper;
 import model.Item;
+import model.Validation;
 
 public class AdminController extends MainController implements Initializable {
 	@FXML
@@ -26,7 +30,13 @@ public class AdminController extends MainController implements Initializable {
 	@FXML
 	private TextField priceTextBox;
 	@FXML
+	private TextField nameTextBox;
+	@FXML
 	private Button addItemButton;
+	@FXML
+	private Button editButton;
+	@FXML
+	private Button saveButton;
 	@FXML
 	private ListView<Item> listView;
 	@FXML
@@ -35,41 +45,71 @@ public class AdminController extends MainController implements Initializable {
 	private TextField imagePathTextField;
 	@FXML
 	private Button imageChooserButton;
-	
+	@FXML
+	private Button deleteButton;
+	@FXML
+	private Hyperlink azLink;
+	@FXML
+	private Hyperlink priceLink;
+	@FXML
+	private Hyperlink recentLink;
 
 	private Image image;
 	private Item newItem;
 
-	ObservableList data = FXCollections.observableArrayList();
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		listView.setItems(setAllData());
+		System.out.println(Database.itemBag.getItemMap().size());
+		GUIHelper.setCustomCells(listView, "");
+
+
+		if (!Database.itemBag.getItemMap().isEmpty()) {
+			Item.setIdCounter(Database.itemBag.getItemMap().size());
+			listView.setItems(GUIHelper.setAllData(listView));
+		} else {
+			Item.setIdCounter(0);
+ 
+		}
+
 		typeComboBox.getItems().addAll("wood", "furniture", "window", "door");
 		typeComboBox.setVisibleRowCount(4);
+		addItemButton.setVisible(true);
+		editButton.setVisible(true);
+		saveButton.setVisible(false);
+//		GUIHelper.setCustomCells(listView, String.valueOf(newItem.getId()));
 
 	}
 
-	public ObservableList<Item> setAllData() {
-
-		for (int j = 0; j < itemBag.getItemStack().size(); j++) {
-			data.addAll(itemBag.getItemStack().get(j));
-		}
-		return data;
+	public void editButtonFire(ActionEvent event) {
+		typeComboBox.setValue(GUIHelper.getSelected(listView).getType());
+		nameTextBox.setText(GUIHelper.getSelected(listView).getName());
+		descriptionTextBox.setText(GUIHelper.getSelected(listView).getDescription());
+		priceTextBox.setText(String.valueOf(GUIHelper.getSelected(listView).getPrice()));
+		imagePathTextField.setText(GUIHelper.getSelected(listView).getImageFileName());
+		addItemButton.setVisible(false);
+		editButton.setVisible(false);
+		saveButton.setVisible(true);
 
 	}
+ 
+	public void saveButtonFire(ActionEvent event) {
+		GUIHelper.getSelected(listView).setType(typeComboBox.getValue());
+		GUIHelper.getSelected(listView).setName(nameTextBox.getText());
+		GUIHelper.getSelected(listView).setDescription(descriptionTextBox.getText());
+		GUIHelper.getSelected(listView).setPrice(Double.parseDouble(priceTextBox.getText()));
+		GUIHelper.getSelected(listView).setImageFileName(imagePathTextField.getText());
+		Database.itemBag.save();
 
-	public ObservableList<Item> setData(String type) {
-
-		for (int j = 0; j < itemBag.getItemStack().size(); j++) {
-
-			if (itemBag.getItemStack().get(j).getName().equals(type)) {
-				data.addAll(itemBag.getItemStack().get(j));
-
-			}
-
+		if (imagePathTextField.getText() != null) {
+			Database.imageBag.save(imagePathTextField.getText());
 		}
-		return data;
+		
+		typeComboBox.setValue(null);
+		nameTextBox.clear();
+		descriptionTextBox.clear();
+		priceTextBox.clear();
+		imagePathTextField.clear();
+		listView.setItems(GUIHelper.setAllData(listView));
 
 	}
 
@@ -82,57 +122,48 @@ public class AdminController extends MainController implements Initializable {
 		switchView("/view/addItemView.fxml", event);
 	}
 
+	public void deleteButtonFire(ActionEvent event) {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Delete Item");
+		alert.setContentText("Are you sure you want to delete this item?");
+		alert.showAndWait();
+		
+		Database.itemBag.getItemMap().remove(GUIHelper.getSelected(listView).getId());
+		Database.itemBag.save();
+		listView.setItems(GUIHelper.setAllData(listView));
+
+	}
+
 	public void displayImage() {
 
-		imageBag.load(listView.getSelectionModel().getSelectedItem().getImageFileName(), itemImageView);
+		Database.imageBag.load(GUIHelper.getSelected(listView).getImageFileName(), itemImageView);
 	}
 
 	public void addItemListFire(ActionEvent event) {
-		newItem = new Item(typeComboBox.getValue(), descriptionTextBox.getText(),
-				Double.parseDouble(priceTextBox.getText()), imagePathTextField.getText());
-		System.out.println("new item filename: " + newItem.getImageFileName());
 
-		switch (typeComboBox.getValue()) {
+		newItem = new Item(typeComboBox.getValue(), nameTextBox.getText(), descriptionTextBox.getText(),
+				Double.parseDouble(priceTextBox.getText()), imagePathTextField.getText(), Database.getCreatedDate());
 
-		case "wood":
-
-			System.out.println("wood");
-			break;
-		case "furniture":
-
-			System.out.println("furniture");
-			break;
-		case "window":
-
-			System.out.println("window");
-			break;
-		case "door":
-
-			System.out.println("door");
-			break;
-
+		if (imagePathTextField.getText() != null) {
+			Database.imageBag.save(imagePathTextField.getText());
 		}
-		System.out.println("image path: " + imagePathTextField.getText());
-		System.out.println("image file name: " + newItem.getImageFileName());
-
-		System.out.println("IMAGEBAG: " + imageBag.getImageMap().get(newItem.getImageFileName()));
-
-		// delete
-		imageBag.addImage(imagePathTextField.getText(), image);
-		// save as filename
-		// ->name file
-		imageBag.save(imagePathTextField.getText());
-		itemBag.addItem(newItem);
-		itemBag.save();
-		listView.setItems(setAllData());
-
-		switchView("/view/addItemView.fxml", event);
+		
+		Database.itemBag.addItem2(newItem.getId(), newItem);
+		Database.itemBag.save();
+		typeComboBox.setValue(null);
+		nameTextBox.clear();
+		descriptionTextBox.clear();
+		priceTextBox.clear();
+		imagePathTextField.clear();
+		listView.setItems(GUIHelper.setAllData(listView));
+		GUIHelper.setSelected(listView, newItem);
 
 	}
 
 	public void imageChooserButtonFire(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
+		
 		if (selectedFile != null) {
 			imagePathTextField.setText(selectedFile.getPath());
 
@@ -144,11 +175,31 @@ public class AdminController extends MainController implements Initializable {
 		}
 	}
 
-	
-
 	public void backFire(ActionEvent event) {
 
-		switchView("/view/adminCenter.fxml", event);
+		listView.getItems().clear();
+		if (Validation.isAdmin(Database.currentUser.getCurrent().getUsername())) {
+			switchView("/view/adminCenter.fxml", event);
+		} else {
+			switchView("/view/mainView.fxml", event);
+
+		}
+	}
+
+	public void azLinkFire(ActionEvent event) {
+		GUIHelper.saveDataSize(GUIHelper.getData().size());
+		listView.setItems(GUIHelper.setSortedNameData(listView));
+	}
+
+	public void priceLinkFire(ActionEvent event) {
+		GUIHelper.saveDataSize(GUIHelper.getData().size());
+		listView.setItems(GUIHelper.setSortedPriceData(listView));
+	}
+
+	public void recentLinkFire(ActionEvent event) {
+		GUIHelper.saveDataSize(GUIHelper.getData().size());
+		listView.setItems(GUIHelper.setSortedRecentlyCreatedData(listView));
+
 	}
 
 }
